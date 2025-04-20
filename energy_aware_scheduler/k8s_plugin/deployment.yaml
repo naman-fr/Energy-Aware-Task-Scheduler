@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: energy-aware-scheduler-plugin
+  labels:
+    app: energy-aware-scheduler-plugin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: energy-aware-scheduler-plugin
+  template:
+    metadata:
+      labels:
+        app: energy-aware-scheduler-plugin
+    spec:
+      containers:
+      - name: scheduler-plugin
+        image: your-docker-repo/energy-aware-scheduler-plugin:latest
+        ports:
+        - containerPort: 8080
+        - containerPort: 8000
+        env:
+        - name: NVIDIA_VISIBLE_DEVICES
+          value: all
+        resources:
+          limits:
+            nvidia.com/gpu: 1
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: dcgm-exporter
+  labels:
+    app: dcgm-exporter
+spec:
+  selector:
+    matchLabels:
+      app: dcgm-exporter
+  template:
+    metadata:
+      labels:
+        app: dcgm-exporter
+    spec:
+      containers:
+      - name: dcgm-exporter
+        image: nvidia/dcgm-exporter:latest
+        ports:
+        - containerPort: 9400
+        resources:
+          limits:
+            nvidia.com/gpu: 1
+        securityContext:
+          privileged: true
+      tolerations:
+      - key: nvidia.com/gpu
+        operator: Exists
+        effect: NoSchedule
+      nodeSelector:
+        nvidia.com/gpu.present: "true"
