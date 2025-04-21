@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: energy-aware-scheduler
+  labels:
+    app: energy-aware-scheduler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: energy-aware-scheduler
+  template:
+    metadata:
+      labels:
+        app: energy-aware-scheduler
+    spec:
+      containers:
+        - name: scheduler
+          image: energy-aware-scheduler:latest
+          ports:
+            - containerPort: 5000
+          env:
+            - name: FLASK_APP
+              value: energy_aware_scheduler.k8s_plugin.server
+            - name: FLASK_RUN_HOST
+              value: "0.0.0.0"
+          resources:
+            limits:
+              cpu: "4"
+              memory: "8Gi"
+            requests:
+              cpu: "2"
+              memory: "4Gi"
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 20
