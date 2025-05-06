@@ -26,6 +26,11 @@ class AsyncNvmlTelemetry:
     def _poll_loop(self):
         while self.running:
             try:
+                logger.debug(f"Polling NVML metrics from object: {self.nvml}, attributes: {dir(self.nvml)}")
+                if not hasattr(self.nvml, 'collect_metrics'):
+                    logger.error("NvmlWrapper instance missing 'collect_metrics' method")
+                    time.sleep(self.poll_interval)
+                    continue
                 data = self.nvml.collect_metrics()
                 self.data_buffer.append(data)
             except Exception as e:

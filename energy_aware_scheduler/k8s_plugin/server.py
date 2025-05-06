@@ -26,6 +26,7 @@ cpu_telemetry.start()
 
 @app.route('/api/scheduling_decisions')
 def scheduling_decisions():
+    import traceback
     # Placeholder tasks
     tasks = [
         HPCTask("task1"),
@@ -34,14 +35,22 @@ def scheduling_decisions():
     try:
         schedule = ml_scheduler.schedule(tasks, nodes)
     except Exception as e:
+        traceback_str = traceback.format_exc()
+        app.logger.error(f"Scheduling error traceback: {traceback_str}")
         return jsonify({"error": f"Scheduling error: {str(e)}"}), 500
 
-    latest_gpu_data = nvml_telemetry.get_latest_data() or {}
+    latest_gpu_data = nvml_telemetry.get_latest_data() or []
     latest_cpu_data = cpu_telemetry.get_latest_data() or {}
 
     response = []
+    # latest_gpu_data is a list of dicts for each GPU device, no node_id key
+    # We cannot key by node_id, so fallback to first GPU metrics for all nodes
+    gpu_metrics = {}
+    if isinstance(latest_gpu_data, list) and len(latest_gpu_data) > 0:
+        gpu_metrics = latest_gpu_data[0] if isinstance(latest_gpu_data[0], dict) else {}
+
     for task_id, node in schedule.items():
-        node_metrics = latest_gpu_data.get(node.node_id, {})
+        node_metrics = gpu_metrics
         gpu_power = node_metrics.get('power', 100.0)
         gpu_temp = node_metrics.get('temperature', node.current_temperature)
         cpu_percent = latest_cpu_data.get('cpu_percent', None)
