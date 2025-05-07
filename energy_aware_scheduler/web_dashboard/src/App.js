@@ -6,7 +6,7 @@ import ProjectOverview from './ProjectOverview';
 import './App.css';
 
 function App() {
-  const [scheduleData, setScheduleData] = useState(null);
+  const [scheduleData, setScheduleData] = useState([]);
   const [nodes, setNodes] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [telemetryData, setTelemetryData] = useState([]);
@@ -19,13 +19,19 @@ function App() {
     let isMounted = true;
 
     const fetchScheduling = () => {
-      fetch('http://localhost:5000/api/scheduling_decisions')
+      fetch('/api/scheduling_decisions')
         .then((response) => {
           if (!response.ok) throw new Error('Network response was not ok');
           return response.json();
         })
-        .then((data) => { if (isMounted) setScheduleData(data); })
-        .catch((error) => { if (isMounted) setError(error.message); });
+        .then((data) => {
+          console.log('Scheduling data:', data);
+          if (isMounted) setScheduleData(data);
+        })
+        .catch((error) => {
+          console.error('Error fetching scheduling:', error);
+          if (isMounted) setError(error.message);
+        });
     };
 
     fetchScheduling();
@@ -41,13 +47,19 @@ function App() {
     let isMounted = true;
 
     const fetchNodes = () => {
-      fetch('http://localhost:5000/api/nodes')
+      fetch('/api/nodes')
         .then((response) => {
           if (!response.ok) throw new Error('Network response was not ok');
           return response.json();
         })
-        .then((data) => { if (isMounted) setNodes(data); })
-        .catch((error) => { if (isMounted) setError(error.message); });
+        .then((data) => {
+          console.log('Nodes data:', data);
+          if (isMounted) setNodes(data);
+        })
+        .catch((error) => {
+          console.error('Error fetching nodes:', error);
+          if (isMounted) setError(error.message);
+        });
     };
 
     fetchNodes();
@@ -63,13 +75,19 @@ function App() {
     let isMounted = true;
 
     const fetchTasks = () => {
-      fetch('http://localhost:5000/api/tasks')
+      fetch('/api/tasks')
         .then((response) => {
           if (!response.ok) throw new Error('Network response was not ok');
           return response.json();
         })
-        .then((data) => { if (isMounted) setTasks(data); })
-        .catch((error) => { if (isMounted) setError(error.message); });
+        .then((data) => {
+          console.log('Tasks data:', data);
+          if (isMounted) setTasks(data);
+        })
+        .catch((error) => {
+          console.error('Error fetching tasks:', error);
+          if (isMounted) setError(error.message);
+        });
     };
 
     fetchTasks();
@@ -85,28 +103,41 @@ function App() {
     let isMounted = true;
 
     const fetchTelemetry = () => {
-      fetch('http://localhost:5000/api/telemetry')
+      fetch('/api/telemetry')
         .then((response) => {
           if (!response.ok) throw new Error('Network response was not ok');
           return response.json();
         })
         .then((data) => {
+          console.log('Telemetry data:', data);
           if (!isMounted) return;
           const mergedData = [];
           const gpuData = data.gpu || [];
           const cpuData = data.cpu || [];
           const maxLength = Math.max(gpuData.length, cpuData.length);
           for (let i = 0; i < maxLength; i++) {
+            // gpuData[i] is an array of GPU metrics objects for that timestamp
+            let avgPower = null;
+            let avgTemp = null;
+            if (gpuData[i] && gpuData[i].length > 0) {
+              const powerValues = gpuData[i].map(gpu => gpu.power).filter(p => p != null);
+              const tempValues = gpuData[i].map(gpu => gpu.temperature).filter(t => t != null);
+              avgPower = powerValues.length > 0 ? powerValues.reduce((a,b) => a + b, 0) / powerValues.length : null;
+              avgTemp = tempValues.length > 0 ? tempValues.reduce((a,b) => a + b, 0) / tempValues.length : null;
+            }
             mergedData.push({
-              timestamp: (gpuData[i]?.timestamp || cpuData[i]?.timestamp) || null,
-              power: gpuData[i]?.power || null,
-              temperature: gpuData[i]?.temperature || null,
+              timestamp: (gpuData[i]?.[0]?.timestamp || cpuData[i]?.timestamp) || null,
+              power: avgPower,
+              temperature: avgTemp,
               utilization: cpuData[i]?.cpu_percent || null,
             });
           }
           setTelemetryData(mergedData);
         })
-        .catch((error) => { if (isMounted) setError(error.message); });
+        .catch((error) => {
+          console.error('Error fetching telemetry:', error);
+          if (isMounted) setError(error.message);
+        });
     };
 
     fetchTelemetry();
@@ -122,9 +153,16 @@ function App() {
     return <div className="error">Error fetching data: {error}</div>;
   }
 
+  console.log('Data lengths:', {
+    scheduleDataLength: scheduleData.length,
+    nodesLength: nodes.length,
+    tasksLength: tasks.length,
+    telemetryDataLength: telemetryData.length,
+  });
+
   if (
     (selectedTab !== 'overview') &&
-    (!scheduleData || nodes.length === 0 || tasks.length === 0 || telemetryData.length === 0)
+    (scheduleData.length === 0 && nodes.length === 0 && tasks.length === 0 && telemetryData.length === 0)
   ) {
     return <div className="loading">Loading data...</div>;
   }

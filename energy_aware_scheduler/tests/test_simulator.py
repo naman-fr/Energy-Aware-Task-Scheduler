@@ -27,6 +27,7 @@ def test_simulator_job_submission_and_run():
     env = simpy.Environment()
     node = Node("node1", cpu_count=8, gpu_count=4, nvidia_ai_chip_count=0, thermal_capacity=100.0)
     simulator = EnergyAwareSimulator(env, [node])
+    simulator.initialize_queues(1)
     job = Job("job1", workload_type="ResNet", average_power=80.0, duration=3.0)
     simulator.submit_job(job)
     env.run()
@@ -38,12 +39,13 @@ def test_hpc_task_run():
     node1 = Node("node1", cpu_count=16, gpu_count=2, nvidia_ai_chip_count=1, thermal_capacity=100.0)
     node2 = Node("node2", cpu_count=16, gpu_count=2, nvidia_ai_chip_count=1, thermal_capacity=100.0)
     nodes = [node1, node2]
-    sim = EnergyAwareSimulator(env, nodes, system_topology=None)  # No topology for simplicity
+    sim = EnergyAwareSimulator(env, nodes)  # Removed system_topology argument
 
     hpc_task = HPCTask("hpc_job1")
     hpc_task.set_computation_profile({"required_nodes": 2, "cpus": 16, "gpus": 2, "nvidia_ai_chips": 1})
     hpc_task.set_communication_pattern({"type": "nearest_neighbor"})
 
+    sim.initialize_queues(1)
     sim.submit_job(hpc_task)
     env.run()
     assert hpc_task.is_complete()

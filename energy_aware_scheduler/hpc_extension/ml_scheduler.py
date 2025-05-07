@@ -10,7 +10,7 @@ class ReinforcementLearningScheduler:
 
     def get_state(self, task, node):
         # Simplified state representation
-        return (task.task_id, node.node_id)
+        return (task.job_id, node.node_id)
 
     def choose_action(self, state, actions):
         # Epsilon-greedy policy
@@ -43,5 +43,5 @@ class ReinforcementLearningScheduler:
                     best_node = node
             if best_node is None:
                 best_node = random.choice(nodes)
-            schedule[task.task_id] = best_node
+            schedule[task.job_id] = best_node
         return schedule

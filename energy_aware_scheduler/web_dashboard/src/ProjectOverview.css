@@ -1,0 +1,45 @@
+.project-overview-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  color: #2c3e50;
+}
+
+.project-overview-container h2 {
+  font-size: 2rem;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.project-overview-container h3 {
+  font-size: 1.5rem;
+  margin-top: 30px;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 5px;
+}
+
+.project-overview-container h4 {
+  font-size: 1.2rem;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: #34495e;
+}
+
+.project-overview-container ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  line-height: 1.6;
+  font-size: 1rem;
+  color: #555;
+}
+
+.project-overview-container p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  color: #444;
+}

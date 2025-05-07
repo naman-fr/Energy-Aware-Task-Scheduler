@@ -1,73 +1,145 @@
+/* General resets and base styles */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f7fa;
+  color: #333;
+}
+
 .app-container {
-  font-family: Arial, sans-serif;
-  margin: 20px;
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-radius: 8px;
 }
 
 h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 20px;
   text-align: center;
-  color: #333;
 }
 
 .nav-tabs {
   display: flex;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #e1e4e8;
 }
 
 .nav-tabs button {
-  background-color: #f0f0f0;
+  background: none;
   border: none;
-  padding: 10px 20px;
-  margin: 0 5px;
+  padding: 12px 24px;
+  margin: 0 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #555;
   cursor: pointer;
-  font-weight: bold;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
 }
 
 .nav-tabs button:hover {
-  background-color: #ddd;
+  color: #007bff;
 }
 
 .nav-tabs button.active {
-  background-color: #007bff;
-  color: white;
+  color: #007bff;
+  border-bottom-color: #007bff;
+  font-weight: 700;
 }
 
 .tab-content {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 20px;
   background-color: #fafafa;
+  border-radius: 6px;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+  min-height: 300px;
 }
 
+/* Loading and error states */
+.loading, .error {
+  font-size: 1.2rem;
+  text-align: center;
+  padding: 40px 0;
+  color: #666;
+}
+
+/* Table styles for scheduling and task details */
 table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
 }
 
-th, td {
-  border: 1px solid #ccc;
-  padding: 8px;
+table th, table td {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+table th {
+  background-color: #007bff;
+  color: white;
+  font-weight: 600;
+}
+
+table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+table tr:hover {
+  background-color: #e6f0ff;
+}
+
+/* Project Overview styles */
+.project-overview-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  color: #2c3e50;
+}
+
+.project-overview-container h2 {
+  font-size: 2rem;
+  margin-bottom: 15px;
   text-align: center;
 }
 
-th {
-  background-color: #f7f7f7;
+.project-overview-container h3 {
+  font-size: 1.5rem;
+  margin-top: 30px;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 5px;
 }
 
-.error {
-  color: red;
-  text-align: center;
-  font-weight: bold;
+.project-overview-container h4 {
+  font-size: 1.2rem;
   margin-top: 20px;
+  margin-bottom: 10px;
+  color: #34495e;
 }
 
-.loading {
-  text-align: center;
-  font-style: italic;
-  margin-top: 20px;
+.project-overview-container ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  line-height: 1.6;
+  font-size: 1rem;
+  color: #555;
+}
+
+.project-overview-container p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  color: #444;
 }
